@@ -15,7 +15,7 @@ export default function LotteryEntrance() {
     const [recentWinner, setRecentWinner] = useState("0")
     const dispatch = useNotification()
 
-    const { runContractFunction: enterRaffle } = useWeb3Contract({
+    const { runContractFunction: enterRaffle , isLoading , isFetching } = useWeb3Contract({
         abi: abi,
         contractAddress: raffleAddress,
         functionName: "enterRaffle",
@@ -76,32 +76,34 @@ export default function LotteryEntrance() {
     }
 
     return (
-        <div>
-            Hi from lottery contract!
+        <div className="p-5">
+            <h1 className="py-4 px-2 font-bold text-3xl">Welcome to Raffle</h1>
             {raffleAddress ? (
                 <div>
                     <button
+                    className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto"
                         onClick={async () => {
                             await enterRaffle({
                                 onSuccess: handleSuccess,
                                 onError: (error) => console.log(error)
                             })
                         }}
+                        disabled={isFetching || isLoading}
                     >
-                        Enter raffle
+                        {isFetching || isLoading ? <div className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full"></div> : <div>Enter Raffle</div>}
                     </button>
-                    <div>
+                    <div className="py-2 px-2  text-xl">
                         Number of Player : {numPlayer}
                     </div>
-                    <div>
+                    <div className="py-2 px-2  text-xl">
                         Entrance fees is : {ethers.utils.formatUnits(entranceFee, "ether")} ETH
                     </div>
-                    <div>
+                    <div className="py-2 px-2  text-xl">
                         Recent  winner : {recentWinner}
                     </div>
                 </div>
             ) : (
-                <div>No raffle address detected!</div>
+                <div className="py-2 px-2  text-xl">No raffle address detected!</div>
             )}
         </div>
     )
